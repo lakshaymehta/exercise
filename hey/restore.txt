@@ -1,0 +1,12 @@
+mysql> USE restore;
+Database changed
+mysql> SELECT * FROM new_table;
++-------------+--------------+---------------+
+| idnew_table | new_tablecol | new_tablecol1 |
++-------------+--------------+---------------+
+|           1 | a            | b             |
+|           2 | c            | d             |
+|           3 | e            | f             |
+|           4 | g            | h             |
++-------------+--------------+---------------+
+4 rows in set (0.00 sec)
