@@ -3,7 +3,8 @@ USE schm;
 CREATE TABLE tastes 
 (
   name VARCHAR(15) NOT NULL,
-  filling VARCHAR(15) NOT NULL
+  filling VARCHAR(15) NOT NULL,
+  PRIMARY KEY (name,filling)
 );
 INSERT INTO tastes(name, filling) VALUES ('Brown', 'Turkey'),
 ('Brown', 'Beef'),
