@@ -45,10 +45,9 @@ INSERT INTO sandwiches (location, bread, filling, price) VALUES ('Lincoln', 'Rye
 
 	-- places where Jones can eat (using a nested subquery) --
 SELECT DISTINCT location FROM sandwiches 
-WHERE location IN 
+WHERE filling IN 
 (
-SELECT location FROM sandwiches AS s, tastes AS t
-WHERE s.filling=t.filling AND name='Jones'
+SELECT filling FROM tastes AS T WHERE t.name='Jones'
 );
 
 	-- places where Jones can eat (without using a nested subquery) --
