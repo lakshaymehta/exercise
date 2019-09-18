@@ -50,10 +50,10 @@ WHERE publisher='Macmillan';
 
 	-- branches that hold any books by Ann Brown (using a nested subquery) --
 SELECT DISTINCT branch from holdings
-WHERE branch IN
+WHERE title IN
 (
-SELECT branch FROM titles, holdings
-WHERE titles.title=holdings.title AND author='Ann Brown'
+SELECT title FROM titles
+WHERE author='Ann Brown'
 );
 
 	-- branches that hold any books by Ann Brown (without using a nested subquery) --
