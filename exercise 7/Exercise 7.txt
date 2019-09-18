@@ -1,0 +1,98 @@
+Q1: What do different columns in the output of EXPLAIN mean? What possible values can those have? What is the meaning of those values?
+Ans:
+-ID = Give value 1 if SELECT statement doesn't include any subqueries & union
+-Select type = SIMPLE value indicates that the statement doesn’t include subqueries or unions. Other values indicate how the statement participates in a subquery or union.
+-Table = name of the table
+-Type = The method used to match rows in different tables when the SELECT statement joins two or more tables. ALL value gives a full table scan which is not efficient
+-Possible key = The indexes that MySQL can use to find rows. If NULL, no indexes can be used.
+-Key = The indexes that MySQL actually uses to return rows. If NULL, no indexes are used.
+-Key_len = length of the index used to retrieve, should be less in order to optimize
+-Ref = column used in conjuction with the index If NULL, no columns are used.
+-Rows = Number of rows examined, Should be less in number
+
+Q2: We use EXPLAIN to optimize slow SQL queries used in our application. Lets say we have a comments table in our application that has a foreign key, user_id, referencing to users table. EXPLAINing the query that finds all the comments made by a user gives us following result.
+
+mysql> EXPLAIN SELECT * FROM comments WHERE user_id = 41;
+
++-------------+------+---------------+---------+-------+---------+-------------+
+| select_type | type | key | key_len | ref | rows | Extra |
++-------------+------+---------------+---------+-------+---------+-------------+
+| SIMPLE | ALL | NULL | NULL | NULL | 1002345 | Using where |
++-------------+------+---------------+---------+-------+---------+-------------+
+
+mysql> SELECT count(id) FROM comments;
+
++-----------+
+| count(id) |
++-----------+
+| 1002345 |
++-----------+
+Q2.1 The value under 'rows' column in the output of EXPLAIN query and SELECT query after it are same. What does it mean?
+Ans: All the comments that are available in the comments table belong to only one user with user_id=41
+
+Q2.2 Is the SELECT query optimal? If no, how do we optimize it?
+Ans: No the it is not optimal. in order to optimize the query we can create index
+ALTER TABLE comments 
+ADD INDEX comment_id (id) VISIBLE;
+
+Q3. In Rails world, we have someting called polymorphic associations (http://guides.rubyonrails.org/association_basics.html#polymorphic-associations). Lets say in our web application, we can let users comment on photographs and articles. Some of rows in comments table are represented as following:
+
+mysql> SELECT * FROM comments LIMIT 5;
+
++----+------------------+----------------+---------+
+| id | commentable_type | commentable_id | user_id |
++----+------------------+----------------+---------+
+| 1 + Article | 1 | 1 |
++----+------------------+----------------+---------+
+| 2 + Photo | 1 | 1 |
++----+------------------+----------------+---------+
+| 3 + Photo | 2 | 2 |
++----+------------------+----------------+---------+
+| 4 + Photo | 2 | 2 |
++----+------------------+----------------+---------+
+| 5 + Article | 1 | 2 |
++----+------------------+----------------+---------+
+
+When we need to fetch comments of a user on a particular Article or Photo we form a query like:
+
+mysql> EXPLAIN SELECT * FROM comments WHERE commentable_id = 1 AND commentable_type = 'Article' AND user_id = 1;
+
++-------------+------+---------------+---------+-------+---------+-------------+
+| select_type | type | key | key_len | ref | rows | Extra |
++-------------+------+---------------+---------+-------+---------+-------------+
+| SIMPLE | ALL | NULL | NULL | NULL | 1000025 | Using where |
++-------------+------+---------------+---------+-------+---------+-------------+
+
+It seems that we do not have any index on any of the columns. And whole comments table is scanned to fetch those comments.
+
+3.1 We decide to index columns in comments table to optimize the SELECT query. What column(s) will you index in which order? Ask the exercise creator for a hint if you are confused.
+Ans: user_id, commentable_id and commentale_type
+
+Q4:
+4.1 EXPLAIN a SELECT query against one of your databases which employs an INNER JOIN between two tables. What does the output look like? What does the values under different columns mean? Do you get only one row in EXPLAIN's output?
+Ans: "INNER JOIN"
+EXPLAIN SELECT * FROM Parts AS p INNER JOIN Manufacturers as m
+WHERE p.ManfID = m.ManfID ORDER BY PartName;
+output :-
+id	select	table		type	possible	key,keylength	Rows	filtered	extra
+1	SIMPLE	m		ALL	PRIMARY				5	20.00	Using where; Using temporary; Using filesort
+1	SIMPLE	p		ALL					17	10.00	Using where; Using join buffer (Block Nested Loop)
+-ID and simple value tells us that SELECT statement doesnt include subqueries & union
+-full table scan is performed indicated by "ALL" value type
+-NULL value indicate that there is no index is used
+-5 rows of "m" table and 17 rows of "p" table are examined
+No, i got 2 rows in Explain output
+
+4.2 Form the same select query in above question using a subquery instead of a JOIN. What does the EXPLAIN output look like now? Which query is better and why?
+Ans:
+"SUB QUERY"
+EXPLAIN SELECT * FROM Parts
+WHERE EXISTS
+(SELECT * FROM Manufacturers AS M, Parts AS P
+WHERE M.ManfID = P.ManfID);
+output :-
+id	select		table		type	possible	key,	keylength		Rows	filtered	extra
+1	PRIMARY		Parts		ALL							17	100.00	
+2	SUBQUERY	P		ALL							17	100.00	
+2	SUBQUERY	M		eq_ref	PRIMARY	PRIMARY		24	mydb.P.ManfID	1	100.00		Using index
+Select query with join better in this case. As it is scanning less rows and more columns are needed as output. 
