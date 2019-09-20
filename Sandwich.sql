@@ -60,3 +60,8 @@ SELECT location, COUNT(distinct name) AS Total_no_of_People
 FROM sandwiches AS s JOIN tastes AS t
 WHERE s.filling=t.filling
 GROUP BY location;
+
+SELECT location, COUNT(DISTINCT name)
+FROM locations LEFT JOIN sandwiches ON sandwiches.location=locations.lname
+LEFT JOIN tastes ON tastes.filling=sandwiches.filling
+GROUP BY location;
