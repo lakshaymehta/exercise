@@ -94,20 +94,20 @@ UPDATE articles SET article='Article26' WHERE (id='25');
 DELETE FROM articles WHERE (id='25');
 
 	-- select all articles whose author's name is user3 (Do this exercise using variable also) --
-SELECT article FROM articles AS A,users AS U WHERE A.user_id=U.id AND U.name='User3'; 
+SELECT article FROM articles,users WHERE articles.user_id=users.id AND users.name='User3'; 
 
 SET @u3:='User3';
-SELECT article FROM articles AS A JOIN users AS U WHERE A.user_id=U.id AND U.name=@u3;
+SELECT article FROM articles JOIN users WHERE articles.user_id=users.id AND users.name=@u3;
 
 	-- For all the articles being selected above, select all the articles and also the comments associated with those articles in a single query (Do this using subquery also) --
-SELECT article, GROUP_CONCAT(comment) FROM articles AS A JOIN users AS U
-ON A.user_id=U.id LEFT JOIN comments AS C 
-ON C.article_id=A.id
-WHERE U.name = @u3 GROUP BY A.article;
+SELECT article, GROUP_CONCAT(comment) FROM articles JOIN users
+ON articles.user_id=users.id LEFT JOIN comments 
+ON comments.article_id=articles.id
+WHERE users.name = @u3 GROUP BY articles.article;
 
 	-- Write a query to select all articles which do not have any comments (Do using subquery also) --
-SELECT article FROM articles AS A LEFT JOIN comments AS C
-ON A.id=C.article_id WHERE C.comment IS NULL;
+SELECT article FROM articles LEFT JOIN comments
+ON articles.id=comments.article_id WHERE comments.comment IS NULL;
 
 SELECT article FROM articles
 WHERE articles.id NOT IN
