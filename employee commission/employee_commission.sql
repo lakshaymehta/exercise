@@ -53,10 +53,14 @@ ON employees.id=commissions.emp_id
 GROUP BY employees.name
 LIMIT 1;
 
+Chris Gayle	9000
+
 	-- Find employee with 4th Highest salary from employee table --
 SELECT name, salary FROM employees 
 ORDER BY salary DESC 
 LIMIT 3,1;
+
+Rahul Dravid 	700000
 
 	-- Find department that is giving highest commission --
 SELECT departments.name, SUM(commissions.com_amount) FROM employees, departments, commissions
@@ -65,8 +69,13 @@ GROUP BY departments.name
 ORDER BY SUM(commissions.com_amount) DESC 
 LIMIT 1;
 
+Banking	13000
+
 	-- Find employees getting commission more than 3000 --
 SELECT GROUP_CONCAT(employees.name), commissions.com_amount FROM employees INNER JOIN commissions
 ON employees.id=commissions.emp_id
 WHERE commissions.com_amount>3000
 GROUP BY commissions.com_amount;
+
+Chris Gayle,Rahul Dravid 	4000
+Chris Gayle,Wasim Akram		5000
