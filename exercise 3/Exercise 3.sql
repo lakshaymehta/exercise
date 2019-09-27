@@ -92,6 +92,7 @@ INSERT INTO comments ( comment_field, User_id, Article_id) VALUES ('comment1',3,
 SELECT * FROM articles;
 UPDATE articles SET article_name='Article26' WHERE (id='25');
 DELETE FROM articles WHERE (id='25');
+DELETE FROM articles WHERE user_id = '2';
 
 	-- select all articles whose author's name is user3 (Do this exercise using variable also) --
 SELECT article_name FROM articles,users WHERE articles.user_id=users.id AND users.name='User3'; 
