@@ -19,7 +19,7 @@ INSERT INTO Users(name, type) VALUES ('User1','admin'),
 CREATE TABLE categories
 (
 id INT NOT NULL AUTO_INCREMENT,
-category VARCHAR(45) NULL,
+category_name VARCHAR(45) NULL,
 PRIMARY KEY (id)
 );
 INSERT INTO Categories(Category) VALUES ('Abstract'),
@@ -31,7 +31,7 @@ SELECT * FROM categories;
 CREATE TABLE articles
 (
 id INT NOT NULL AUTO_INCREMENT,
-article VARCHAR(100) NULL,
+article_name VARCHAR(100) NULL,
 user_id INT,
 category_id INT,
 PRIMARY KEY (id),
@@ -67,7 +67,7 @@ INSERT INTO Articles ( Article, User_id, Category_id) VALUES ('Article1',3,1),
 CREATE TABLE comments
 (
 id INT AUTO_INCREMENT,
-comment VARCHAR(60),
+comment_name VARCHAR(60),
 user_id INT,
 article_id INT,
 PRIMARY KEY(id),
@@ -90,41 +90,41 @@ INSERT INTO comments ( comment, User_id, Article_id) VALUES ('comment1',3,2),
 
 	-- manage(create, update, delete) categories, articles, comments, and users --
 SELECT * FROM articles;
-UPDATE articles SET article='Article26' WHERE (id='25');
+UPDATE articles SET article_name='Article26' WHERE (id='25');
 DELETE FROM articles WHERE (id='25');
 
 	-- select all articles whose author's name is user3 (Do this exercise using variable also) --
-SELECT article FROM articles,users WHERE articles.user_id=users.id AND users.name='User3'; 
+SELECT article_name FROM articles,users WHERE articles.user_id=users.id AND users.name='User3'; 
 
 SET @u3:='User3';
-SELECT article FROM articles JOIN users WHERE articles.user_id=users.id AND users.name=@u3;
+SELECT article_name FROM articles JOIN users WHERE articles.user_id=users.id AND users.name=@u3;
 
 	-- For all the articles being selected above, select all the articles and also the comments associated with those articles in a single query (Do this using subquery also) --
-SELECT article, GROUP_CONCAT(comment) FROM articles JOIN users
+SELECT article_name, GROUP_CONCAT(comment) FROM articles JOIN users
 ON articles.user_id=users.id LEFT JOIN comments 
 ON comments.article_id=articles.id
-WHERE users.name = @u3 GROUP BY articles.article;
+WHERE users.name = @u3 GROUP BY articles.article_name;
 
 	-- Write a query to select all articles which do not have any comments (Do using subquery also) --
-SELECT article FROM articles LEFT JOIN comments
+SELECT article_name FROM articles LEFT JOIN comments
 ON articles.id=comments.article_id WHERE comments.comment IS NULL;
 
-SELECT article FROM articles
+SELECT article_name FROM articles
 WHERE articles.id NOT IN
 (
 SELECT DISTINCT article_id FROM comments
 );
 
 	-- Write a query to select article which has maximum comments --
-SELECT article, count(comment) from articles, comments
+SELECT article_name, count(comment) from articles, comments
 WHERE articles.id=comments.article_id
-GROUP BY article
+GROUP BY article_name
 ORDER BY count(comment) DESC LIMIT 1;
 
 	-- Write a query to select article which does not have more than one comment by the same user ( do this using left join and group by ) --
-SELECT article, COUNT(comment) FROM articles LEFT JOIN comments
+SELECT article_name, COUNT(comment) FROM articles LEFT JOIN comments
 ON articles.id=comments.article_id LEFT JOIN users
 ON users.id=comments.user_id 
-GROUP BY article 
+GROUP BY article_name 
 HAVING COUNT(comments.user_id) = COUNT(DISTINCT comments.user_id);
 
