@@ -35,7 +35,7 @@ article_name VARCHAR(100) NULL,
 user_id INT,
 category_id INT,
 PRIMARY KEY (id),
-FOREIGN KEY(user_id) REFERENCES users(id),
+FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
 FOREIGN KEY(category_id) REFERENCES categories(id)
 );
 INSERT INTO Articles ( article_name, User_id, Category_id) VALUES ('Article1',3,1),
@@ -72,7 +72,7 @@ user_id INT,
 article_id INT,
 PRIMARY KEY(id),
 FOREIGN KEY(user_id) REFERENCES users(id),
-FOREIGN KEY(article_id) REFERENCES articles(id)
+FOREIGN KEY(article_id) REFERENCES articles(id) ON DELETE CASCADE
 );
 INSERT INTO comments ( comment_field, User_id, Article_id) VALUES ('comment1',3,2),
 ('comment2',4,1),
