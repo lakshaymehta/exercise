@@ -117,10 +117,15 @@ SELECT DISTINCT article_id FROM comments
 );
 
 	-- Write a query to select article which has maximum comments --
-SELECT articles.name, count(comment_field) from articles, comments
-WHERE articles.id=comments.article_id
+SELECT articles.name, COUNT(comment_field) AS counts FROM articles JOIN comments
+ON articles.id=comments.article_id
 GROUP BY articles.name
-ORDER BY count(comment_field) DESC LIMIT 1;
+HAVING counts = 
+(
+SELECT COUNT(*) counts FROM comments_field
+GROUP BY article_id 
+ORDER BY counts DESC LIMIT 1
+);
 
 	-- Write a query to select article which does not have more than one comment by the same user ( do this using left join and group by ) --
 SELECT articles.name, COUNT(comment_field) FROM articles LEFT JOIN comments
